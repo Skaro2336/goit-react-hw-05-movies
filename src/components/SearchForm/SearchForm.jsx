@@ -1,59 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { FormContainer, Input } from './SearchFormStyles';
+import React from 'react';
 import PropTypes from 'prop-types';
-import debounce from 'lodash.debounce';
-import { searchMoviesByName } from 'Api/Api';
+import { FormContainer, Input, Button } from './SearchFormStyles';
 
-const SearchForm = ({ onSearch }) => {
-  const [query, setQuery] = useState('');
-  const [searchQuery, setSearchQuery] = useState([]);
+const SearchMovie = ({ onSubmit }) => {
+  const handleSubmit = e => {
+    e.preventDefault();
+    
+    const query = e.target.elements.query.value;
 
-  const handleQueryChange = e => {
-    const newQuery = e.target.value;
-    setQuery(newQuery);
-    debouncedSearch(newQuery);
+    onSubmit(query);
+    e.target.reset();
   };
 
-  const debouncedSearch = debounce(onSearch, 300);
-
-  useEffect(() => {
-    const fetchMoviesByNameData = async () => {
-      try {
-        const response = await searchMoviesByName(query);
-        setSearchQuery(response);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    if (query) {
-      fetchMoviesByNameData();
-    } else {
-      setSearchQuery([]);
-    }
-  }, [query]);
-
   return (
-    <FormContainer>
-      <Input
-        type="text"
-        placeholder="Search for movies..."
-        value={query}
-        onChange={handleQueryChange}
-      />
-      {searchQuery.length > 0 && (
-        <ul>
-          {searchQuery.map(movie => (
-            <li key={movie.id}>{movie.title}</li>
-          ))}
-        </ul>
-      )}
+    <FormContainer onSubmit={handleSubmit}>
+      <Input type="text" placeholder="Enter movie name" name="query" />
+      <Button type="submit">Search</Button>
     </FormContainer>
   );
 };
 
-SearchForm.propTypes = {
-  onSearch: PropTypes.func.isRequired,
+SearchMovie.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
 };
 
-export default SearchForm;
+export default SearchMovie;

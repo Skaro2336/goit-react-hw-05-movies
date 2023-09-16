@@ -1,46 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { ProductListContainer, ProductItem } from './MoviesListStyles';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { useLocation } from 'react-router-dom';
-import { fetchTrendMovies } from 'Api/Api';
+import {
+  ProductListContainer,
+  TrendingHeading,
+  Item,
+  List,
+  StyledLink,
+} from './MoviesListStyles';
 
-const MoviesList = () => {
-  const location = useLocation();
-  const [trendMovies, setTrendMovies] = useState([]);
+import { BsFilm } from 'react-icons/bs';
 
-  useEffect(() => {
-    const fetchTrendMoviesData = async () => {
-      try {
-        const response = await fetchTrendMovies();
-        setTrendMovies(response);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchTrendMoviesData();
-  }, []);
-
-  if (!trendMovies || trendMovies.length === 0) {
-    return <p>No trend movies found.</p>;
-  }
-
+const MoviesList = ({ trendMovies }) => {
   return (
     <ProductListContainer>
-      {trendMovies.map(movie => (
-        <ProductItem
-          key={movie.id}
-          state={{ from: location }}
-          to={`/movies/${movie.id}`}
-        >
-          {movie.title}
-        </ProductItem>
-      ))}
+      <TrendingHeading>Trending Movies</TrendingHeading>
+      <List>
+        {trendMovies.map(trendMovie => (
+          <Item key={trendMovie.id}>
+            <StyledLink to={`/movies/${trendMovie.id}`}>
+              <BsFilm /> {trendMovie.title}
+            </StyledLink>
+          </Item>
+        ))}
+      </List>
     </ProductListContainer>
   );
 };
 
 MoviesList.propTypes = {
-  movies: PropTypes.arrayOf(
+  trendMovies: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
       id: PropTypes.number.isRequired,

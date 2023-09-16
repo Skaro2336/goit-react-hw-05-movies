@@ -19,21 +19,19 @@ export const Logo = styled.div`
   display: flex;
   align-items: center;
   font-size: 24px;
+  gap: 10px;
 `;
 
-export const IconLogo = styled.img`
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-`;
-
-export const Links = styled(NavLink)`
+export const StyledLink = styled(NavLink)`
   margin-left: 20px;
   text-decoration: none;
   color: #333;
 
   &:hover {
     text-decoration: underline;
+  }
+  &.active {
+    color: orange;
   }
 `;
 

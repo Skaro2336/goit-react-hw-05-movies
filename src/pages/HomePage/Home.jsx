@@ -1,27 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { fetchTrendMovies } from 'Api/Api';
-import ProductList from 'components/MoviesList';
+import MoviesList from 'components/MoviesList';
+import LoadingSpinner from 'components/Loader/Loader';
 
 const Home = () => {
   const [trendMovies, setTrendMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const movies = await fetchTrendMovies();
         setTrendMovies(movies);
+        setIsLoading(false);
       } catch (error) {
-        console.error(error);
+        setError(true);
+        setIsLoading(false);
       }
     };
     fetchData();
   }, []);
 
   return (
-    <div>
-      <h2>Trending Movies</h2>
-      <ProductList products={trendMovies} />
-    </div>
+    <>
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : error ? (
+        <p>Error loading data</p>
+      ) : (
+        <MoviesList trendMovies={trendMovies} />
+      )}
+    </>
   );
 };
 

@@ -1,36 +1,38 @@
 import { Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 
 import LoadingSpinner from 'components/Loader';
 import {
   Container,
   Header,
   Logo,
-  IconLogo,
-  Links,
+  StyledLink,
   Footer,
   Text,
 } from './SharedLayoutStyles';
+import { FaFilm } from 'react-icons/fa';
 
 const SharedLayout = () => {
   return (
     <>
       <Container>
         <Header>
-          <Logo>
-            <IconLogo />
-            TMDB
-          </Logo>
+          <Link to="/">
+            <Logo>
+              <FaFilm />
+              TMDB
+            </Logo>
+          </Link>
           <nav>
-            <Links to="/">Home</Links>
-            <Links to="/movies">Movie</Links>
+            <StyledLink to="/">Home</StyledLink>
+            <StyledLink to="/movies">Movie</StyledLink>
           </nav>
         </Header>
         <Suspense fallback={<LoadingSpinner />}>
           <Outlet />
         </Suspense>
         <Footer>
-          <Text>&copy; Movie Search</Text>
+          <Text>&copy; Movie Search create by Stanislav Klymenko</Text>
         </Footer>
       </Container>
     </>

@@ -1,48 +1,60 @@
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { searchMoviesByName } from 'Api/Api';
-import SearchForm from 'components/SearchForm';
-import ProductList from 'components/MoviesList';
+import SearchMovie from 'components/SearchForm';
+import {
+  ProductListContainer,
+  TrendingHeading,
+  StyledLink,
+} from 'components/MoviesList/MoviesListStyles';
 
-const Movies = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchResult, setSearchResult] = useState([]);
-  const [searchParams] = useSearchParams();
-
-  const movieName = searchParams.get('query') || '';
-
-  const updateQueryString = newQuery => {
-    searchParams.set('query', newQuery);
-  };
+const MoviesList = () => {
+  const [movies, setMovies] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const query = searchParams.get('query') || '';
 
   useEffect(() => {
-    const search = async () => {
+    const fetchMovies = async () => {
       try {
-        setIsLoading(true);
-        const movies = await searchMoviesByName(movieName);
-        setSearchResult(movies);
+        const results = await searchMoviesByName(query);
+        
+        if (results.length === 0) {
+          setMovies([]);
+        } else {
+          setMovies(results);
+        }
       } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
+        console.error('Error fetching movies:', error);
       }
     };
-    search();
-  }, [movieName, searchParams]);
+
+    fetchMovies();
+  }, [query]);
+
+  const handleSearch = query => {
+    setSearchParams({ query });
+  };
 
   return (
-    <div>
-      <h2>Movies</h2>
-      <SearchForm initialValue={movieName} onSearch={updateQueryString} />
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : searchResult.length === 0 && movieName ? (
-        <h2> Nothing found</h2>
+    <ProductListContainer>
+      <TrendingHeading>Movies</TrendingHeading>
+      <SearchMovie onSubmit={handleSearch} />
+      {movies.length === 0 ? (
+        <p>No movies found for the search query.</p>
       ) : (
-        <ProductList products={searchResult} />
+        movies.map(movie => (
+          <StyledLink
+            key={movie.id}
+            to={`/movies/${movie.id}`}
+            state={{ from: location }}
+          >
+            {movie.title}
+          </StyledLink>
+        ))
       )}
-    </div>
+    </ProductListContainer>
   );
 };
 
-export default Movies;
+export default MoviesList;

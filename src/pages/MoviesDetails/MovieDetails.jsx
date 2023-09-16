@@ -2,15 +2,20 @@ import React, { useEffect, useState, useRef, Suspense } from 'react';
 import { useParams, Link, Outlet, useLocation } from 'react-router-dom';
 
 import { fetchMovieDetails } from 'Api/Api';
+import LoadingSpinner from 'components/Loader';
+import Button from 'components/Button';
+
 import {
   MovieDetailsContainer,
   MovieDetailsHeader,
   MovieImageContainer,
   MovieImage,
   ProductionCompanies,
+  Companie,
+  AdditionalInfoContainer,
+  AdditionalInfoButton,
+  Divider,
 } from './MovieDetailsStyles';
-import LoadingSpinner from 'components/Loader';
-import Button from 'components/Button';
 
 const MovieDetails = () => {
   const { movieId } = useParams();
@@ -38,11 +43,17 @@ const MovieDetails = () => {
   const userScorePercentage = Math.round(movieDetails.vote_average * 10);
 
   return (
-    <div>
+    <>
       <Link to={backLinkRef.current}>
-        <Button text="⬅️ Go back" />
+        <Button text="Go back" />
       </Link>
-      <MovieDetailsContainer backdrop={movieDetails.backdrop_path}>
+      <MovieDetailsContainer>
+        <MovieImageContainer>
+          <MovieImage
+            src={`https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`}
+            alt={movieDetails.title}
+          />
+        </MovieImageContainer>
         <MovieDetailsHeader>
           <h1>{movieDetails.title}</h1>
           <p>User score: {userScorePercentage}%</p>
@@ -51,7 +62,7 @@ const MovieDetails = () => {
           <h2>Genres</h2>
           <p>
             {movieDetails.genres.map(genre => (
-              <span key={genre.id}> {genre.name}</span>
+              <span key={genre.id}>{genre.name}</span>
             ))}
           </p>
           {movieDetails.production_companies.length > 0 && (
@@ -59,40 +70,40 @@ const MovieDetails = () => {
               <h2>Production companies</h2>
               <ProductionCompanies>
                 {movieDetails.production_companies.map(company => (
-                  <img
-                    key={company.id}
-                    src={`https://image.tmdb.org/t/p/w500${company.logo_path}`}
-                    alt={company.name}
-                  />
+                  <Companie key={company.id}>
+                    {company.logo_path ? (
+                      <img
+                        src={`https://image.tmdb.org/t/p/w500${company.logo_path}`}
+                        alt={company.name}
+                      />
+                    ) : (
+                      <img
+                        src={`https://via.placeholder.com/100x50?text=${company.logo_path}`}
+                        alt={company.name}
+                      />
+                    )}
+                  </Companie>
                 ))}
               </ProductionCompanies>
             </>
           )}
         </MovieDetailsHeader>
-        <MovieImageContainer>
-          <MovieImage
-            src={
-              movieDetails.poster_path
-                ? `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`
-                : ''
-            }
-            alt={movieDetails.title}
-          />
-        </MovieImageContainer>
       </MovieDetailsContainer>
-      <hr />
+      <Divider />
       <h3>Additional information</h3>
-      <Link to="cast">
-        <Button text="Cast" />
-      </Link>
-      <Link to="reviews">
-        <Button text="Reviews" />
-      </Link>
-      <hr />
+      <AdditionalInfoContainer>
+        <Link to="cast">
+          <AdditionalInfoButton text="Cast" />
+        </Link>
+        <Link to="reviews">
+          <AdditionalInfoButton text="Reviews" />
+        </Link>
+      </AdditionalInfoContainer>
+      <Divider />
       <Suspense fallback={<LoadingSpinner />}>
         <Outlet />
       </Suspense>
-    </div>
+    </>
   );
 };
 

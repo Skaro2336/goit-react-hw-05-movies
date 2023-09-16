@@ -34,17 +34,14 @@ const Cast = () => {
           <ActorList>
             {cast.map(actor => (
               <ActorItem key={actor.id}>
-                {actor.profile_path ? (
-                  <img
-                    src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`}
-                    alt={`${actor.name} profile`}
-                  />
-                ) : (
-                  <img
-                    src={`https://via.placeholder.com/200x300?text=No+Image`}
-                    alt={`${actor.name} profile`}
-                  />
-                )}
+                <img
+                  src={
+                    actor.profile_path
+                      ? `https://image.tmdb.org/t/p/w200${actor.profile_path}`
+                      : `https://via.placeholder.com/200x300?text=No+Image`
+                  }
+                  alt={`${actor.name} profile`}
+                />
                 <ActorInfo>
                   <ActorName>{actor.name}</ActorName>
                   <p>Character: {actor.character}</p>

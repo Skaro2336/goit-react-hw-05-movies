@@ -1,60 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { searchMoviesByName } from 'Api/Api';
-import SearchMovie from 'components/SearchForm';
-import {
-  ProductListContainer,
-  TrendingHeading,
-  StyledLink,
-} from 'components/MoviesList/MoviesListStyles';
+import SearchMovie from 'components/SearchForm/SearchForm';
+import MoviesList from 'components/MoviesList';
 
-const MoviesList = () => {
+import LoadingSpinner from 'components/Loader/Loader';
+
+const MovieList = () => {
   const [movies, setMovies] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const location = useLocation();
-  const query = searchParams.get('query') || '';
+  const [loading, setLoading] = useState(false);
+
+  const query = searchParams.get('query');
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    if (!query) {
+      return;
+    }
+
+    const fetchMovies = async query => {
+      setLoading(true);
+
       try {
         const results = await searchMoviesByName(query);
-        
-        if (results.length === 0) {
-          setMovies([]);
-        } else {
-          setMovies(results);
-        }
+
+        setMovies(results);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching movies:', error);
+        setMovies([]);
+        setLoading(false);
       }
     };
 
-    fetchMovies();
+    fetchMovies(query);
   }, [query]);
 
-  const handleSearch = query => {
+  const handleSearchChange = async query => {
     setSearchParams({ query });
   };
 
   return (
-    <ProductListContainer>
-      <TrendingHeading>Movies</TrendingHeading>
-      <SearchMovie onSubmit={handleSearch} />
-      {movies.length === 0 ? (
-        <p>No movies found for the search query.</p>
-      ) : (
-        movies.map(movie => (
-          <StyledLink
-            key={movie.id}
-            to={`/movies/${movie.id}`}
-            state={{ from: location }}
-          >
-            {movie.title}
-          </StyledLink>
-        ))
-      )}
-    </ProductListContainer>
+    <>
+      <h2>Search movies</h2>
+      <SearchMovie onSearch={handleSearchChange} />
+      {loading ? <LoadingSpinner /> : <MoviesList movies={movies} />}
+    </>
   );
 };
 
-export default MoviesList;
+export default MovieList;

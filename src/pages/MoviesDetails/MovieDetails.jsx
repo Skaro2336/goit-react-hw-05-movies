@@ -40,8 +40,6 @@ const MovieDetails = () => {
     return <LoadingSpinner />;
   }
 
-  const userScorePercentage = Math.round(movieDetails.vote_average * 10);
-
   return (
     <>
       <Link to={backLinkRef.current}>
@@ -49,14 +47,19 @@ const MovieDetails = () => {
       </Link>
       <MovieDetailsContainer>
         <MovieImageContainer>
-          <MovieImage
-            src={`https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`}
+          <MovieImage />
+          <img
+            src={
+              movieDetails.poster_path
+                ? `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`
+                : `https://via.placeholder.com/200x300?text=No+Image`
+            }
             alt={movieDetails.title}
           />
         </MovieImageContainer>
         <MovieDetailsHeader>
           <h1>{movieDetails.title}</h1>
-          <p>User score: {userScorePercentage}%</p>
+          <p>User score: {movieDetails.popularity}%</p>
           <h2>Overview</h2>
           <p>{movieDetails.overview}</p>
           <h2>Genres</h2>
@@ -71,17 +74,14 @@ const MovieDetails = () => {
               <ProductionCompanies>
                 {movieDetails.production_companies.map(company => (
                   <Companie key={company.id}>
-                    {company.logo_path ? (
-                      <img
-                        src={`https://image.tmdb.org/t/p/w500${company.logo_path}`}
-                        alt={company.name}
-                      />
-                    ) : (
-                      <img
-                        src={`https://via.placeholder.com/100x50?text=${company.logo_path}`}
-                        alt={company.name}
-                      />
-                    )}
+                    <img
+                      src={
+                        company.logo_path
+                          ? `https://image.tmdb.org/t/p/w500${company.logo_path}`
+                          : `https://via.placeholder.com/100x50?text=No+Image`
+                      }
+                      alt={company.name}
+                    />
                   </Companie>
                 ))}
               </ProductionCompanies>

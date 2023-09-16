@@ -12,16 +12,11 @@ export const fetchTrendMovies = async () => {
 };
 
 export const searchMoviesByName = async query => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/search/movie?api_key=${API_KEY}&language=en-US&query=${query}&page=1&include_adult=false`
-    );
-    const results = response.data.results; // Make sure 'results' is being returned correctly
-    return results;
-  } catch (error) {
-    console.error('Error searching movies:', error);
-    throw error;
-  }
+  const response = await axios.get(
+    `${BASE_URL}/search/movie?api_key=${API_KEY}&language=en-US&query=${query}&page=1&include_adult=false`
+  );
+  const results = response.data.results;
+  return results;
 };
 
 export const fetchMovieDetails = async movieId => {

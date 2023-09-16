@@ -25,12 +25,14 @@ const Home = () => {
 
   return (
     <>
+      <h2>Trending Movies</h2>
+
       {isLoading ? (
         <LoadingSpinner />
       ) : error ? (
         <p>Error loading data</p>
       ) : (
-        <MoviesList trendMovies={trendMovies} />
+        <MoviesList movies={trendMovies} />
       )}
     </>
   );
